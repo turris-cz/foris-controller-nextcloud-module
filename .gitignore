@@ -1,1 +1,5 @@
 *~
+*.pyc
+.eggs/
+build/
+foris_controller_nextcloud_module.egg-info/

@@ -1,0 +1,78 @@
+{
+    "oneOf": [
+        {
+            "description": "Get status from the Nextcloud module",
+            "properties": {
+                "module": {"enum": ["nextcloud"]},
+                "kind": {"enum": ["request"]},
+                "action": {"enum": ["get_status"]}
+            },
+            "additionalProperties": false
+        },
+        {
+            "description": "Reply to get status from the Nextcloud module",
+            "properties": {
+                "module": {"enum": ["nextcloud"]},
+                "kind": {"enum": ["reply"]},
+                "action": {"enum": ["get_status"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "nextcloud_installed": {"type": "boolean"},
+                        "nextcloud_configured": {"type": "boolean"},
+                        "nextcloud_configuring": {"type": "boolean"}
+                    },
+                    "additionalProperties": false,
+                    "required": ["nextcloud_installed", "nextcloud_configured", "nextcloud_configuring"]
+                }
+            },
+            "additionalProperties": false,
+            "required": ["data"]
+        },
+
+        {
+            "description": "Setup Nextcloud",
+            "properties": {
+                "module": {"enum": ["nextcloud"]},
+                "kind": {"enum": ["request"]},
+                "action": {"enum": ["configure_nextcloud"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "credentials": {
+                            "type": "object",
+                            "properties": {
+                                "login": {"type": "string"},
+                                "password": {"type": "string"}
+                            },
+                            "additionalProperties": false,
+                            "required": ["login", "password"]
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["credentials"]
+                }
+            },
+            "additionalProperties": false,
+            "required": ["data"]
+        },
+        {
+            "description": "Reply to Setup Nextcloud",
+            "properties": {
+                "module": {"enum": ["nextcloud"]},
+                "kind": {"enum": ["reply"]},
+                "action": {"enum": ["configure_nextcloud"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "result": {"type": "boolean"}
+                    },
+                    "additionalProperties": false,
+                    "required": ["result"]
+                }
+            },
+            "additionalProperties": false,
+            "required": ["data"]
+        }
+    ]
+}
