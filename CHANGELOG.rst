@@ -1,4 +1,4 @@
-0.0 (YYYY-MM-DD)
+0.1 (2020-09-22)
 ----------------
 
-* some change
+* initial release as standalone module
