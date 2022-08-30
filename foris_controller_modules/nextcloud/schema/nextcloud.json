@@ -29,7 +29,25 @@
             "additionalProperties": false,
             "required": ["data"]
         },
-
+        {
+            "description": "Notify about Nextcloud configuration state change",
+            "properties": {
+                "module": {"enum": ["nextcloud"]},
+                "kind": {"enum": ["notification"]},
+                "action": {"enum": ["state_change"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "configuration": {"enum": ["failed", "completed"]},
+                        "msg": {"type": "string"}
+                    },
+                    "additionalProperties": false,
+                    "required": ["configuration"]
+                }
+            },
+            "additionalProperties": false,
+            "required": ["data"]
+        },
         {
             "description": "Setup Nextcloud",
             "properties": {
