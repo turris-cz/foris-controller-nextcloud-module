@@ -47,7 +47,10 @@ setup(
     install_requires=[
         "foris-controller @ git+https://gitlab.nic.cz/turris/foris-controller/foris-controller.git"
     ],
-    setup_requires=["pytest-runner", "flake8"],
+    setup_requires=[
+        "pytest-runner",
+        "flake8<4.0",  # setuptools integration with flake8 is deprecated in version >=4.0
+    ],
     tests_require=["pytest", "foris-controller-testtools", "foris-client", "ubus", "paho-mqtt"],
     dependency_links=[
         "git+https://gitlab.nic.cz/turris/foris-controller/foris-controller-testtools.git#egg=foris-controller-testtools",

@@ -1,21 +1,16 @@
 before_script:
   - pip install virtualenv
   - virtualenv -p "$(which python)" /tmp/test
+  - source /tmp/test/bin/activate
+  - pip install .
 
 stages:
   - test
 
-.run_script: &run_script
-  script:
-    - source /tmp/test/bin/activate
-
-    - pip install .
-
-    - python setup.py test --addopts="--backend openwrt --backend mock"
-
 test_python3:
   image: registry.nic.cz/turris/foris-ci/python3
-  <<: *run_script
+  script:
+    - python setup.py test --addopts="--backend openwrt --backend mock"
 
 flake8:
   image: registry.nic.cz/turris/foris-ci/python3
