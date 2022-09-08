@@ -1,6 +1,6 @@
 #
 # foris-controller-nextcloud-module
-# Copyright (C) 2020 CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (C) 2020, 2022 CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,29 +18,61 @@
 #
 
 import pytest
-
 from foris_controller_testtools.fixtures import (
-    only_backends,
-    only_message_buses,
+    FILE_ROOT_PATH,
     backend,
     infrastructure,
-    FILE_ROOT_PATH,
-    notify_api
+    notify_api,
+    only_backends,
+    only_message_buses,
 )
-
 from foris_controller_testtools.utils import FileFaker
 
 
 @pytest.fixture(scope="function")
-def nextcloud_configs():
+def nextcloud_files_configured():
+    """Mock that nextcloud is installed and configured."""
     with FileFaker(
         FILE_ROOT_PATH, "/srv/www/nextcloud/index.php", False, ""
     ) as res1, FileFaker(
-        FILE_ROOT_PATH, "/tmp/nextcloud_configuring", False, ""
-    ) as res2, FileFaker(
         FILE_ROOT_PATH, "/srv/www/nextcloud/config/config.php", False, ""
-    ) as res3:
-        yield res1, res2, res3
+    ) as res2:
+        yield res1, res2
+
+
+@pytest.fixture(scope="function")
+def nextcloud_files_installed():
+    """Mock that nextcloud is installed, but not configured."""
+    with FileFaker(
+        FILE_ROOT_PATH, "/srv/www/nextcloud/index.php", False, ""
+    ) as res:
+        yield res
+
+
+@pytest.fixture(scope="function")
+def nextcloud_installer_ok():
+    """Mock the sucessful nextcloud install script."""
+    content = """\
+#!/bin/sh
+
+exit 0
+"""
+
+    with FileFaker(FILE_ROOT_PATH, "/usr/bin/nextcloud_install", True, content) as res:
+        yield res
+
+
+@pytest.fixture(scope="function")
+def nextcloud_installer_botched():
+    """Mock the botched install script, which will return non-zero exit code."""
+    content = """\
+#!/bin/sh
+
+exit 2
+"""
+
+    with FileFaker(FILE_ROOT_PATH, "/usr/bin/nextcloud_install", True, content) as res:
+        yield res
 
 
 def test_get_status(infrastructure):
@@ -51,7 +83,7 @@ def test_get_status(infrastructure):
 
 
 @pytest.mark.only_backends(["openwrt"])
-def test_configure_nextcloud(infrastructure, nextcloud_configs):
+def test_configure_nextcloud_success(nextcloud_installer_ok, infrastructure, nextcloud_files_configured):
     res = infrastructure.process_message(
         {
             "module": "nextcloud",
@@ -79,4 +111,39 @@ def test_configure_nextcloud(infrastructure, nextcloud_configs):
         {"module": "nextcloud", "action": "get_status", "kind": "request"}
     )
 
-    assert all(res1['data'].values())
+    assert res1["data"]["nextcloud_installed"] is True
+    assert res1["data"]["nextcloud_configuring"] is False
+    assert res1["data"]["nextcloud_configured"] is True
+
+
+@pytest.mark.only_backends(["openwrt"])
+def test_configure_nextcloud_failure(nextcloud_installer_botched, infrastructure, nextcloud_files_installed):
+    res = infrastructure.process_message(
+        {
+            "module": "nextcloud",
+            "action": "configure_nextcloud",
+            "kind": "request",
+            "data": {
+                "credentials": {
+                    "login": "username",
+                    "password": "passw0rd"
+                }
+            }
+        }
+    )
+
+    assert res == {
+        "module": "nextcloud",
+        "action": "configure_nextcloud",
+        "kind": "reply",
+        "data": {
+            "result": False
+        }
+    }
+
+    res1 = infrastructure.process_message(
+        {"module": "nextcloud", "action": "get_status", "kind": "request"}
+    )
+    assert res1["data"]["nextcloud_installed"] is True
+    assert res1["data"]["nextcloud_configuring"] is False
+    assert res1["data"]["nextcloud_configured"] is False

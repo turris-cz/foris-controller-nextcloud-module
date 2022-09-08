@@ -1,6 +1,6 @@
 #
 # foris-controller-nextcloud-module
-# Copyright (C) 2020 CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (C) 2020-2022 CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,8 +37,7 @@ class NextcloudWrapper:
 
 class SoftwareManager(BaseCmdLine, BaseFile):
     def configure_nextcloud(self, creds):
-        self._run_command_and_check_retval(
-            ["/usr/bin/nextcloud_install", "--batch", creds['credentials']['login'], creds['credentials']['password']],
-            0
+        retval, _, _ = self._run_command(
+            "/usr/bin/nextcloud_install", "--daemon", "--batch", creds['credentials']['login'], creds['credentials']['password']
         )
-        return {'result': True}
+        return {"result": retval == 0}
