@@ -1,6 +1,6 @@
 #
 # foris-controller-nextcloud-module
-# Copyright (C) 2020, 2022 CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (C) 2020-2023 CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,14 +18,8 @@
 #
 
 import pytest
-from foris_controller_testtools.fixtures import (
-    FILE_ROOT_PATH,
-    backend,
-    infrastructure,
-    notify_api,
-    only_backends,
-    only_message_buses,
-)
+
+from foris_controller_testtools.fixtures import FILE_ROOT_PATH
 from foris_controller_testtools.utils import FileFaker
 
 

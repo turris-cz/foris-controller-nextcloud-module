@@ -1,6 +1,6 @@
 #
 # foris-controller-nextcloud-module
-# Copyright (C) 2020, 2022 CZ.NIC, z.s.p.o. (http://www.nic.cz/)
+# Copyright (C) 2020-2023 CZ.NIC, z.s.p.o. (http://www.nic.cz/)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,17 +20,8 @@
 import os
 
 import pytest
-# load common fixtures
-from foris_controller_testtools.fixtures import (
-    FILE_ROOT_PATH,
-    backend,
-    cmdline_script_root,
-    controller_modules,
-    env_overrides,
-    extra_module_paths,
-    message_bus,
-    uci_config_default_path,
-)
+
+from foris_controller_testtools.fixtures import FILE_ROOT_PATH
 
 
 @pytest.fixture(scope="session")
@@ -40,6 +31,11 @@ def uci_config_default_path():
 
 @pytest.fixture(scope="session")
 def cmdline_script_root():
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_root")
+
+
+@pytest.fixture(scope="session")
+def file_root():
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_root")
 
 
