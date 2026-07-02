@@ -37,6 +37,9 @@ Homepage = "https://gitlab.nic.cz/turris/foris-controller/foris-controller-nextc
 [tool.hatch.version]
 path = "foris_controller_nextcloud_module/__init__.py"
 
+[]project.entry-points.foris_controller_modules]
+nextcloud = "foris_controller_modules.nextcloud"
+
 [tool.hatch.build.targets.sdist]
 packages = [
     "foris_controller_backends/",
